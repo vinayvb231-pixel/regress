@@ -21,16 +21,10 @@ regress run                      # runs your prompt tests
 ## 60-second quickstart (no API key needed)
 
 ```bash
-<<<<<<< Updated upstream
-pip install regress-ai
-regress init        # writes a starter regress.yaml
-regress run         # runs your prompt tests
-=======
 pip install regress-llm
 mkdir demo && cd demo
 regress init
 regress run
->>>>>>> Stashed changes
 ```
 
 ```
@@ -43,14 +37,7 @@ The starter suite uses the `mock` provider, so it passes with zero setup. Edit `
 
 ## Going live
 
-<<<<<<< Updated upstream
-1. Install: `pip install 'regress-ai[openai]'` (or `[anthropic]`, or `[all]`)
-2. Set your key: `export OPENAI_API_KEY=...`
-3. `regress init` and edit the generated `regress.yaml`
-4. `regress run`
-=======
 Install with your provider's extra and set your key:
->>>>>>> Stashed changes
 
 ```bash
 pip install 'regress-llm[openai]'      # or [anthropic], or [all]
@@ -159,12 +146,6 @@ regress --version
 This repo dogfoods itself — [`.github/workflows/regress.yml`](https://github.com/vinayvb231-pixel/regress/blob/main/.github/workflows/regress.yml) runs the suite on every PR and comments a Markdown report on the PR. To use it in your repo:
 
 ```yaml
-<<<<<<< Updated upstream
-- run: pip install regress-ai
-- run: regress run --format markdown --output regress-report.md
-  env:
-    OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-=======
 name: regress
 
 "on":
@@ -200,7 +181,6 @@ jobs:
               issue_number: context.issue.number,
               body: body,
             });
->>>>>>> Stashed changes
 ```
 
 The `if: always()` on the comment step means the report lands on the PR even when tests fail — which is exactly when you want to read it.
