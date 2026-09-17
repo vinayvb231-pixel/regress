@@ -1,0 +1,15 @@
+# Intentional failure demo: the mock response does NOT contain "ahoy",
+# so `regress run --config examples/failing-demo/regress.yaml` exits 1.
+# Useful for testing CI wiring — a red build should block the PR.
+version: 1
+
+defaults:
+  provider: mock
+  model: mock
+
+tests:
+  - name: pirate_greeting
+    prompt: "Say hello like a pirate."
+    mock_response: "Hello there."
+    assert:
+      - contains: "ahoy"

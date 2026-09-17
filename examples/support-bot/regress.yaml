@@ -1,0 +1,35 @@
+# Live example using a real model. Needs OPENAI_API_KEY in the environment.
+# Try:  pip install 'regress-ai[openai]' && regress run --config examples/support-bot/regress.yaml
+version: 1
+
+defaults:
+  provider: openai
+  model: gpt-4o-mini
+  temperature: 0
+
+tests:
+  - name: refund_answer_uses_policy
+    prompt: |
+      You are a support bot for Acme Corp. Answer using ONLY the policy below.
+      If the policy doesn't cover the question, say "I don't have that information."
+      Policy: {policy}
+      Customer: {question}
+    inputs:
+      policy: "Refunds are available within 30 days of purchase with a receipt."
+      question: "Can I get a refund for headphones I bought 2 weeks ago? I have the receipt."
+    assert:
+      - contains: "30 days"
+      - llm_judge:
+          criteria: "The answer approves the refund and cites the policy conditions"
+
+  - name: admits_when_policy_silent
+    prompt: |
+      You are a support bot for Acme Corp. Answer using ONLY the policy below.
+      If the policy doesn't cover the question, say "I don't have that information."
+      Policy: {policy}
+      Customer: {question}
+    inputs:
+      policy: "Refunds are available within 30 days of purchase with a receipt."
+      question: "Do you ship internationally?"
+    assert:
+      - contains: "don't have that information"

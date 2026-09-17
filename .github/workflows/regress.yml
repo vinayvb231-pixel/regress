@@ -1,0 +1,50 @@
+name: regress
+
+"on":
+  pull_request:
+
+jobs:
+  prompt-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install regress
+        run: pip install .
+
+      - name: Run prompt regression tests
+        id: regress
+        run: regress run --format markdown --output regress-report.md
+        # exit code 1 on failures -> the PR check goes red, blocking merge
+
+      - name: Comment report on PR
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const body = fs.readFileSync('regress-report.md', 'utf8');
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: body,
+            });
+
+  # Optional: also run the live-model example when a key is configured.
+  prompt-regression-live:
+    runs-on: ubuntu-latest
+    if: ${{ secrets.OPENAI_API_KEY != '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install '.[openai]'
+      - run: regress run --config examples/support-bot/regress.yaml
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
