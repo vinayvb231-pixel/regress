@@ -3,6 +3,11 @@ name: regress
 "on":
   pull_request:
 
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
 jobs:
   prompt-regression:
     runs-on: ubuntu-latest
