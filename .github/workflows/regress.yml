@@ -36,15 +36,22 @@ jobs:
             });
 
   # Optional: also run the live-model example when a key is configured.
+  # NOTE: `secrets` is not allowed in a job-level `if:`, so the key is
+  # exposed via job env and checked on the step instead.
   prompt-regression-live:
     runs-on: ubuntu-latest
-    if: ${{ secrets.OPENAI_API_KEY != '' }}
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - run: pip install '.[openai]'
-      - run: regress run --config examples/support-bot/regress.yaml
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+      - name: Install regress with OpenAI support
+        run: pip install '.[openai]'
+
+      - name: Run live-model prompt tests
+        if: ${{ env.OPENAI_API_KEY != '' }}
+        run: regress run --config examples/support-bot/regress.yaml
